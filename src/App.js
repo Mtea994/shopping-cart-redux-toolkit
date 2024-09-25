@@ -4,7 +4,10 @@ import Layout from "./components/Layout/Layout";
 import Products from "./components/Shop/Products";
 import Notification from "./components/UI/Notification";
 import { useDispatch, useSelector } from "react-redux";
-import { sendDataToCart } from "./components/store/cart-slice";
+import {
+  fetchDataToCart,
+  sendDataToCart,
+} from "./components/store/cart-actions";
 let initialRender = true;
 function App() {
   const cartIsVisible = useSelector((state) => state.ui.cartIsVisible);
@@ -13,13 +16,16 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(fetchDataToCart());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (initialRender) {
       initialRender = false;
       return;
     }
     dispatch(sendDataToCart(cart));
   }, [cart, dispatch]);
-  console.log(cartIsVisible);
 
   return (
     <Layout>
