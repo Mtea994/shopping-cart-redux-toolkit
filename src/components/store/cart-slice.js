@@ -1,4 +1,39 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { uiActions } from "./ui-slice";
+
+export const fetchDataToCart = createAsyncThunk(
+  "cart/fetchData",
+  async (_, { dispatch }) => {
+    dispatch(
+      uiActions.sendNotification({
+        status: "pending",
+        title: "Loading...",
+        message: "Loading data to cart",
+      })
+    );
+    const response = await fetch(
+      "https://asyncodertk-default-rtdb.firebaseio.com/cart.json"
+    );
+    if (!response.ok) {
+      dispatch(
+        uiActions.sendNotification({
+          status: "error",
+          title: "Error...",
+          message: "Failed to load Data",
+        })
+      );
+    }
+    const resData = await response.json();
+    dispatch(
+      uiActions.sendNotification({
+        status: "success",
+        title: "Success...",
+        message: "Data Loaded Successfully",
+      })
+    );
+    return resData;
+  }
+);
 
 const cartSlice = createSlice({
   name: "cart",
@@ -43,6 +78,14 @@ const cartSlice = createSlice({
     emptyCart(state) {
       state.cartItems = [];
     },
+  },
+  extraReducers: (builder) => {
+    // builder.addCase(fetchDataToCart.pending, (state, action) => {});
+    builder.addCase(fetchDataToCart.fulfilled, (state, action) => {
+      state.cartItems = action.payload.cartItems || [];
+      state.totalQuantity = action.payload.totalQuantity;
+    });
+    // builder.addCase(fetchDataToCart.rejected, (state, action) => {});
   },
 });
 

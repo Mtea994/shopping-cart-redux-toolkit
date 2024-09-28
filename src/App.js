@@ -5,9 +5,12 @@ import Products from "./components/Shop/Products";
 import Notification from "./components/UI/Notification";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchDataToCart,
+  // fetchDataToCart,
   sendDataToCart,
 } from "./components/store/cart-actions";
+
+import { fetchDataToCart } from "./components/store/cart-slice";
+
 let initialRender = true;
 function App() {
   const cartIsVisible = useSelector((state) => state.ui.cartIsVisible);
